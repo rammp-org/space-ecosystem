@@ -2,6 +2,7 @@
 id: "0007"
 title: Wire protocol on 10BASE-T1S segments
 status: proposed
+origin: claude-draft
 date: 2026-10-19
 pillars: [S, C]
 prd: ["§3.3 item 2", "§11.2", "Q3"]

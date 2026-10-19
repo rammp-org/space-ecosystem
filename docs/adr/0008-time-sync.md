@@ -2,6 +2,7 @@
 id: "0008"
 title: Time-synchronised timestamps in the telemetry schema
 status: proposed
+origin: claude-draft
 date: 2026-10-19
 pillars: [S, C]
 prd: ["§4.2 non-goals", "E-03"]

@@ -33,7 +33,8 @@ const nodes = fs.readdirSync(path.join(ROOT, 'docs/nodes')).filter(f => f.endsWi
 }).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 const day = d => d instanceof Date ? d.toISOString().slice(0, 10) : d;
 const md = (src, out, kind) => { const { data, content } = matter(read(src)); for (const k in data) data[k] = day(data[k]); return page(src, out, { kind, data, content }); };
-const status = md('docs/status.md', 'index.html', 'status');
+const overview = md('docs/overview.md', 'index.html', 'overview');
+const status = md('docs/status.md', 'status.html', 'status');
 const arch = md('docs/architecture.md', 'architecture.html', 'doc');
 const questions = md('docs/open-questions.md', 'questions.html', 'doc');
 const prd = md('PACE_ECOSYSTEM_PRD.md', 'prd.html', 'prd');
@@ -91,7 +92,7 @@ const issues = section('## 14. Known issues').split('\n').filter(l => /^\| \d+ \
 const roadmap = section('### 15.1').split('\n').filter(l => /^\| \*\*R\d/.test(l)).map(l => { const c = cells(l); return { m: plain(c[0]).replace(' — ', ': '), what: plain(c[1]), exit: plain(c[2]) }; });
 
 // ── Template ────────────────────────────────────────────────────────
-const NAV = [['index.html', 'Status'], ['architecture.html', 'Architecture'], ['decisions/index.html', 'Decisions'], ['nodes/index.html', 'Nodes'], ['questions.html', 'Questions'], ['prd.html', 'PRD v0.1'], ['glossary.html', 'Glossary']];
+const NAV = [['index.html', 'Overview'], ['status.html', 'Status'], ['architecture.html', 'Architecture'], ['decisions/index.html', 'Decisions'], ['nodes/index.html', 'Nodes'], ['questions.html', 'Questions'], ['prd.html', 'PRD v0.1'], ['glossary.html', 'Glossary']];
 
 function shell(p, { title, meta = [], controls = '', body, wide = false }) {
   const to = target => rel(p, target);
@@ -166,7 +167,7 @@ render.status = p => {
 
   <section class="ax-panel" style="margin-bottom:8px">
     <h2>Nodes by pillar</h2>
-    <div class="ax-cap">Every board on or near the SPACE network. Click one for its page.</div>
+    <div class="ax-cap">Source: PRD v0.1, the bus bar brief, and boards found in rammp-org repos (not yet confirmed with their owners). Zone controller and sense nodes are proposals.</div>
     <div class="pillars">${pillarCol('S', 'Sensing')}${pillarCol('P', 'Power')}${pillarCol('A', 'Actuation')}${pillarCol('C', 'Control / comms')}</div>
   </section>
 
@@ -178,7 +179,7 @@ render.status = p => {
     </div>
     <div class="ax-panel">
       <h2>Changed since PRD v0.1</h2>
-      <div class="ax-cap">Requirement statuses that moved in other repos</div>
+      <div class="ax-cap">Found by reading other rammp-org repos after the PRD was written. Verify with the owners.</div>
       <table><thead><tr><th>ID</th><th>Was</th><th>Now</th><th>Why</th></tr></thead><tbody>
       ${reqs.filter(r => r.was).map(r => `<tr><td class="ax-n">${r.id}</td><td>${statusChip(r.was)}</td><td>${statusChip(r.status)}</td><td class="note">${esc(r.note)}</td></tr>`).join('')}
       </tbody></table>
@@ -187,7 +188,7 @@ render.status = p => {
 
   <section class="ax-panel" style="margin-bottom:8px">
     <h2>Decision queue</h2>
-    <div class="ax-cap">Proposed decisions, in the order to grill them</div>
+    <div class="ax-cap">ADR-0002 to 0012 were drafted by Claude from the 2026-10-19 single-pair Ethernet discussion. None has been reviewed by the team.</div>
     <table><thead><tr><th>ADR</th><th>Decision</th><th>Pillars</th><th>Status</th></tr></thead><tbody>
     ${adrs.map(a => `<tr><td class="ax-n"><a href="${rel(p, a.out)}">${a.data.id}</a></td><td><a href="${rel(p, a.out)}">${esc(a.data.title)}</a></td><td>${pillarTags(a.data.pillars)}</td><td>${statusChip(a.data.status)}</td></tr>`).join('')}
     </tbody></table>
@@ -212,16 +213,77 @@ render.status = p => {
 
   <section class="doc notes">${renderMd(p.content, p).html}</section>`;
   return shell(p, {
-    title: 'SPACE status',
+    title: 'Engineering status',
     meta: [`PRD v0.1 · 2026-09-14`, `status ${esc(status.data.updated)}`, `built ${today}`],
-    controls: `<a class="ax-btn primary" href="decisions/index.html" data-fx="ripple">Open decisions</a>`,
+    controls: `<a class="ax-btn" href="decisions/index.html">Decisions</a>`,
     body,
   });
 };
 
+render.overview = p => {
+  const d = p.data, to = t => rel(p, t.replace(/\.md$/, '.html').replace(/^nodes\//, 'nodes/'));
+  const li = xs => `<ul class="plain">${xs.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+  const pairs = xs => xs.map(([k, v]) => `<div class="pair"><div class="ax-label">${esc(k)}</div><div>${esc(v)}</div></div>`).join('');
+  const sec = (title, cap, inner, cls = '') => `<section class="ax-panel ov ${cls}"><h2>${title}</h2>${cap ? `<div class="ax-cap">${cap}</div>` : ''}${inner}</section>`;
+  const fam = f => `<a class="famcard" href="${to(f.node)}"><div class="ax-label">${esc(f.name)}</div><b>${esc(f.label)}</b><span class="ax-status ${f.stage === 'in use' ? 'good' : ''}">${esc(cap(f.stage))}</span><p>${esc(f.what)}</p></a>`;
+  const body = `
+  <section class="hero">
+    <p class="lede">${esc(d.lede)}</p>
+    <p class="principle">${esc(d.principle)}</p>
+  </section>
+
+  <section class="ax-tiles">${d.racer.map(([v, u, s]) => `<div class="ax-tile"><div class="ax-label">The Racer today</div><div class="ax-value">${esc(v)}<small>${esc(u)}</small></div><div class="ax-sub">${esc(s)}</div></div>`).join('')}</section>
+  <div class="ax-cap note">${esc(d.racer_note)}</div>
+
+  <div class="ax-grid two">
+    ${sec('Why SPACE', 'Lab robots rarely reach the people who need them', pairs(d.why) + `<p class="ax-muted">${esc(d.why_note)}</p>`)}
+    ${sec('The correct solution was harder', 'Out-of-spec lab hardware', li(d.lab_pain) + `<p><b>${esc(d.principle)}</b></p>`)}
+  </div>
+  ${sec('The same robots keep coming up', 'Each needs bespoke power, actuation, and comms', `<div class="ax-grid two">${pairs(d.robots)}</div><p><span class="ax-label">One shared shape</span><br>${esc(d.shared_shape)}</p>`)}
+
+  <div class="ax-grid two">
+    ${sec('Compute at the edge', 'Every actuator is a full network node', li(d.edge) + `<p class="close">${esc(d.edge_close)}</p>`)}
+    ${sec('Nodes with headroom simplify the main computer', 'Complexity moves into the modules, and the system gets simpler', pairs(d.headroom))}
+  </div>
+
+  <div class="ax-grid two">
+    ${sec('SPACE and ATOS: where the seam is', '', li(d.atos))}
+    ${sec('What exists next door', 'And what each is missing', pairs(d.compare))}
+  </div>
+
+  ${sec('Module families', 'From the deck. Click a family for its current page.', `<div class="fams">${d.families.map(fam).join('')}</div>`)}
+
+  ${sec('Three form factors for three stages of a project', esc(d.pathway_note), `<div class="fams">${d.pathway.map(([stage, name, what]) => `<div class="famcard"><div class="ax-label">${esc(stage)}</div><b>${esc(name)}</b><p>${esc(what)}</p></div>`).join('')}</div>`)}
+
+  <div class="ax-grid two">
+    ${sec('Design principles', '', `<ol class="principles">${d.principles.map(x => `<li>${esc(x)}</li>`).join('')}</ol>`)}
+    ${sec('What SPACE is not', 'Open: does anyone disagree with any item on this list?', li(d.is_not))}
+  </div>
+
+  <div class="ax-grid two">
+    ${sec('Power classes follow the robot', esc(d.power_note), `<table><thead><tr><th>Class</th><th>Current</th><th>Robots</th></tr></thead><tbody>${d.power_classes.map(([a, n, r]) => `<tr><td>${esc(n)}</td><td class="num">${esc(a)}</td><td>${esc(r)}</td></tr>`).join('')}</tbody></table>`)}
+    ${sec('Load shedding in four layers', 'From polite to absolute', `<table><thead><tr><th class="num">#</th><th>Layer</th><th>What happens</th></tr></thead><tbody>${d.shedding.map(([l, w], i) => `<tr><td class="num">${i + 1}</td><td>${esc(l)}</td><td>${esc(w)}</td></tr>`).join('')}</tbody></table>`)}
+  </div>
+
+  <div class="ax-grid two">
+    ${sec('The network', '', `<p>${esc(d.network)}</p>`)}
+    ${sec('Every module ships with its evidence', 'Knowledge that lives with the design lets open hardware reach more places', li(d.evidence))}
+  </div>
+
+  ${sec('Open questions from the deck', 'The right-hand column is what has happened since the presentation', `<table><thead><tr><th class="num">#</th><th>Question</th><th>Since the deck</th></tr></thead><tbody>${d.open.map((o, i) => `<tr><td class="num">${i + 1}</td><td>${esc(o.q)}</td><td class="note">${esc(o.since) || '<span class="ax-muted">Not discussed yet</span>'}</td></tr>`).join('')}</tbody></table>`)}
+
+  <section class="ax-panel ov since">
+    <h2>Since the deck</h2>
+    <div class="ax-cap">New direction, not in the presentation</div>
+    <p>Sensing joins the name: SPACE. Smart bus bars, managed switches, and single-pair Ethernet (10BASE-T1S, 100BASE-T1) for smaller components, with RJ45 kept for high-compute nodes. The <a href="${rel(p, 'nodes/smart-bus-bar.html')}">smart bus bar brief</a> is the first concrete piece. ADR-0002 to 0012 on the <a href="${rel(p, 'decisions/index.html')}">decisions page</a> are Claude-drafted proposals for discussion, and the <a href="${rel(p, 'questions.html')}">questions page</a> records what the team has settled so far.</p>
+  </section>`;
+  return shell(p, { title: 'SPACE', meta: ['Sensing, Power, Actuation, and Control Electronics', esc(d.source)], controls: `<a class="ax-btn primary" href="${rel(p, 'questions.html')}" data-fx="ripple">Open questions</a>`, body });
+};
+
 render.adr = p => {
   const i = adrs.indexOf(p), prev = adrs[i - 1], next = adrs[i + 1];
-  const body = `
+  const draft = p.data.origin === 'claude-draft' ? `<div class="banner ax-panel">Drafted by Claude from the 2026-10-19 discussion about single-pair Ethernet and smart bus bars. Nothing here has been reviewed by the team. Argue with it in a thread.</div>` : '';
+  const body = `${draft}
   <div class="adr-layout">
     <article class="doc">${renderMd(p.content, p).html}</article>
     <aside class="ax-panel side">

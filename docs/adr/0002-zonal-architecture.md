@@ -2,6 +2,7 @@
 id: "0002"
 title: Zonal architecture
 status: proposed
+origin: claude-draft
 date: 2026-10-19
 pillars: [P, C]
 prd: ["§6.1", "§3.3", "§9.2", "Eco-5"]

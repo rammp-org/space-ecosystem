@@ -2,6 +2,7 @@
 id: "0012"
 title: Zone switch silicon, build or buy
 status: proposed
+origin: claude-draft
 date: 2026-10-19
 pillars: [C]
 prd: ["§3.2 PACE Hub"]

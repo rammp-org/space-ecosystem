@@ -2,6 +2,7 @@
 id: "0011"
 title: Single-pair connectors and harness standard
 status: proposed
+origin: claude-draft
 date: 2026-10-19
 pillars: [P, C]
 prd: ["H-13", "§4.2"]

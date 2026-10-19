@@ -5,7 +5,7 @@ subtitle: PRD v0.1 §17 questions, where each one stands now, plus new ones.
 
 | # | Question (PRD v0.1 §17) | Where it stands | Goes to |
 |---|---|---|---|
-| Q1 | What does ATOS stand for, and what does ABC bridge to first? | ATOS now names the RTPS network the chair runs on. The expansion is still unrecorded. The MIB took ABC's supervisor role. | [ADR-0002](adr/0002-zonal-architecture.md) |
+| Q1 | What does ATOS stand for, and what does ABC bridge to first? | ATOS is the software platform SPACE is the Layer 1 hardware profile for (October deck). The MIB took ABC's supervisor role. | [ADR-0002](adr/0002-zonal-architecture.md) |
 | Q2 | Two Racers per chair, or one dual-motor V2? | Open. Two boards are on the chair now. A P4 makes dual-motor easier. | [ADR-0010](adr/0010-node-mcu-and-phy-platform.md) |
 | Q3 | ROS 2 standard messages or PACE IDL? | Answered in practice: `rammp-rtps` structs are the wire truth. A ROS 2 mapping package is still open. | [ADR-0007](adr/0007-edge-wire-protocol.md) |
 | Q4 | Bus operating range, and bus-voltage sensing? | Range is 40 to 54 V (bus bar brief). The smart bus bar measures the bus and publishes a pack message. | [ADR-0002](adr/0002-zonal-architecture.md) |

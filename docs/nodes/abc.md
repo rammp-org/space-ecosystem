@@ -15,7 +15,7 @@ Ethernet to UART/USB bridge. Draft layout finished. LED and UDP-echo bring-up fi
 ## Where it stands
 
 - The PRD gave ABC the supervisor role (B-05). The MIB took that role instead, so ABC's scope is now a bridge between legacy serial equipment and the SPACE network, plus a bench DHCP server.
-- "ATOS" now names the RTPS network the chair runs on (the RACER motor API says "drive a PACE RACER wheel over ATOS"). The expansion of the acronym is still unrecorded.
+- ATOS is the robot software platform that SPACE is the Layer 1 hardware profile for.
 
 ## Open
 

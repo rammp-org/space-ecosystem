@@ -2,6 +2,7 @@
 id: "0005"
 title: Stop sequence across node and bus bar
 status: proposed
+origin: claude-draft
 date: 2026-10-19
 pillars: [P, A, C]
 prd: ["§3.3 item 4", "F-04", "F-10", "E-08"]

@@ -13,7 +13,10 @@ SPACE (Sensing, Power, Actuation, and Control Electronics) is the family of netw
 | Tier | The class of physical link a node gets: compute, motion and command, or sense and accessory (ADR-0003). | |
 | Actuation domain | The switched 48 V power that feeds power stages only (ADR-0004). | |
 | Logic domain | The power that feeds MCUs, PHYs, and sensors, which stays up when actuation is off (ADR-0004). | |
-| ATOS | The RTPS network and topic set the chair runs on, defined in `rammp-rtps`. The acronym's expansion is unrecorded. | |
+| ATOS | The robot software platform. SPACE is its normative hardware profile for Layer 1 ("SPACE is to ATOS what Pixhawk is to PX4"). ATOS defines discovery, QoS, authentication, encryption, agents, and the hardware manifest. | |
+| Manifest | The ATOS descriptor each SPACE node publishes for itself and every device behind it. | |
+| I/O node | A SPACE node that fronts secondary buses (CAN, RC servo, Dynamixel, Qwiic) and plain or safety I/O, with a watchdog and safe state for each device. | |
+| Devkit / breakout / module / reference design | The four SPACE form factors, from research to product. | |
 | MIB | MEBot Interface Board. The supervisor: DHCP, per-wheel commands, deadman. | |
 | Axis | A motor's role on the chair: `front_caster_left`, `front_caster_right`, `drive_left`, `drive_right`. | channel |
 | SAFE_STOP | Requested state: ramp to zero at `accel_limit`, then hold position under a reduced torque cap. | soft stop |

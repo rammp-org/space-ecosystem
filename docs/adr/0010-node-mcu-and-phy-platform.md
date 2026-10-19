@@ -2,6 +2,7 @@
 id: "0010"
 title: MCU and PHY platform for new nodes
 status: proposed
+origin: claude-draft
 date: 2026-10-19
 pillars: [S, A, C]
 prd: ["H-07", "§15.3"]

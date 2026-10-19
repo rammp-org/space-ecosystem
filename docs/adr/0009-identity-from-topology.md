@@ -2,6 +2,7 @@
 id: "0009"
 title: Node role from topology, identity from the MCU
 status: proposed
+origin: claude-draft
 date: 2026-10-19
 pillars: [C]
 prd: ["§3.3 item 7", "E-04"]

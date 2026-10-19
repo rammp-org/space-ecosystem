@@ -87,3 +87,27 @@ td.note { color: var(--ax-muted); font-size: 12px; }
 td.ax-n, td:first-child.ax-n { white-space: nowrap; }
 .doc hr { display: none; }
 .diagram text.lbl { text-anchor: start; }
+
+/* Overview */
+.hero { margin: 4px 0 18px; }
+.hero .lede { font: 400 20px/1.45 var(--ax-font); max-width: 62ch; margin: 0 0 10px; }
+.hero .principle { font: 500 13px var(--ax-font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ax-accent); margin: 0; }
+.ax-tiles .ax-value { font-size: 28px; }
+.note { margin: 2px 0 14px; }
+.ov { margin-bottom: 8px; }
+.ov p { margin: 8px 0; }
+.plain { margin: 6px 0; padding-left: 18px; }
+.plain li { margin: 5px 0; }
+.pair { padding: 8px 0; border-bottom: 1px solid var(--ax-rule); }
+.pair:last-of-type { border-bottom: 0; }
+.pair .ax-label { margin-bottom: 2px; color: var(--ax-ink); }
+.close { font: 500 15px var(--ax-font); color: var(--ax-accent); }
+.fams { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--ax-gap); margin-top: 6px; }
+.famcard { display: grid; align-content: start; gap: 4px; padding: 12px; border: 1px solid var(--ax-border); text-decoration: none !important; }
+a.famcard:hover { border-color: var(--ax-accent); background: rgba(var(--ax-accent-rgb), 0.05); }
+.famcard b { font: 700 15px var(--ax-font-title); letter-spacing: 0.06em; text-transform: uppercase; }
+.famcard p { margin: 4px 0 0; font-size: 13px; color: var(--ax-muted); }
+.principles { margin: 6px 0; padding-left: 22px; }
+.principles li { margin: 6px 0; }
+.principles li::marker { font-family: var(--ax-font-mono); color: var(--ax-accent); }
+.since { border-color: var(--ax-accent); }

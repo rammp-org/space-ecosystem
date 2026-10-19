@@ -2,6 +2,7 @@
 id: "0006"
 title: Keep a hardwired e-stop loop alongside the network
 status: proposed
+origin: claude-draft
 date: 2026-10-19
 pillars: [P, C]
 prd: ["E-08", "S-02", "§16"]

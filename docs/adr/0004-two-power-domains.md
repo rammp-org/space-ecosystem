@@ -2,6 +2,7 @@
 id: "0004"
 title: Two power domains, logic independent of actuation
 status: proposed
+origin: claude-draft
 date: 2026-10-19
 pillars: [P, A]
 prd: ["§3.3 item 1", "E-01", "H-11", "§14 #4"]

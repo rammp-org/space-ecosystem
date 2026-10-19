@@ -2,6 +2,7 @@
 id: "0003"
 title: Physical link chosen by criticality, not bandwidth
 status: proposed
+origin: claude-draft
 date: 2026-10-19
 pillars: [S, A, C]
 prd: ["§3.3 item 2", "E-02", "H-07"]
