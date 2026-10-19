@@ -40,7 +40,7 @@ The PRD was frozen on 2026-09-14. Work has moved on in other repos since then. T
 - MIB (MEBot Interface Board), ESP32-P4, `RAMMP-mib-fw`. It is the supervisor: it runs DHCP, commands each wheel, and owns the deadman. Its README lists "control of PACE RACER motor controllers over PoE" as planned work.
 - HMI / joystick, M5Stack Tab5 (ESP32-P4) on the RAMMP HMI PCB, W5500 Ethernet, `pace-hmi-fw`. Its UI follows RAMMP UI spec V2 and is in daily use.
 - Power bus Gen 1.5, `RAMMP-Electronics` branch `Gen1.5_powerbus` (Ariana, 2026-10-07). It is a passive distribution board: XT90 in, four XT60 out.
-- Brake resistor, `pace-brake-r`. It is a KiCad design for protecting the battery from regen on high-power controllers. It bears on PRD open question 6.
+- Brake resistor, `pace-brake-r`. It is a KiCad design for protecting the battery from regen on high-power controllers. The bus bar brief makes each Racer responsible for its own brake resistor.
 - Dyno torque bench, `dynopace`. A MotorGo Plink reads a DY-N-200 torque sensor over RS485.
 
 ## New direction (not yet in the PRD)
