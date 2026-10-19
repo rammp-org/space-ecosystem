@@ -50,16 +50,19 @@ Other behaviour from the brief:
 - Output design is a parametric block: one topology whose current class changes with a part or two (MOSFET, shunt, sense range). A universal port with dual-range sense is welcome if the cost is reasonable, but it is not a requirement. Higher power classes take priority over lower ones.
 - The e-fuse only needs to catch hard shorts and runaway, so a trip around 2x the expected draw is fine.
 - Loads at 100 W and below will likely run on PoE instead, and anything under 56 W certainly will.
+- On e-stop the Racer stops its motor with its own brake resistor and, later, an active-release solenoid disk brake. It does not push energy back onto the bus.
+- The hardware e-fuse class is fixed per output by part population. A load's declared contract must fit inside it, or the bus bar refuses and flags it.
+- High-power output target: 1 kW at 48 V (25 A continuous at a 40 V pack), ±50 A sense range, 10 mA resolution, ±0.5 % of reading. A slow precision monitor (for example INA228/INA229 class) for telemetry and coulomb counting, plus a fast path for the hardware trip and the pre-trip capture.
 - Regen energy dumping is the load's job. Each Racer carries its own brake resistor for when its output is cut or the battery disconnects. Otherwise the battery and BMS absorb regen.
 
 ## Open
 
 - Switch and sense topology: hot-swap controller with external MOSFETs, or an integrated eFuse where current allows.
 - Reverse blocking: a single high-side MOSFET passes regen through its body diode even when off. Back-to-back MOSFETs on the drive outputs, everywhere, or nowhere for the prototype?
-- Whether the e-fuse class is set in firmware or by part population, and what happens if firmware sets the wrong class.
+- Whether drive outputs are fully reverse-blocking (recommended) while compute and accessory outputs use a plain high-side FET.
 - One board, or a controller board plus output boards. Left to the hardware collaborators.
 - Mapping outputs to network identities, since power and data arrive on separate connectors. Candidates: a provisioning table, a boot-time handshake where the load draws a recognisable current pattern, or pairing each output with a switch port ([ADR-0009](../adr/0009-identity-from-topology.md)).
-- Who owns the e-stop. The bus bar is the leading candidate: it takes the e-stop out of band from Ethernet, cuts motion outputs, and publishes the STO event and any faults to the network.
+- Who owns the e-stop (recommended: the bus bar): it takes the e-stop out of band from Ethernet, cuts motion outputs, and publishes the STO event and any faults to the network.
 - Shed sequence for a chair on a slope. This needs testing.
 
 ## Out of scope

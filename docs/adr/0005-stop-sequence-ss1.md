@@ -32,8 +32,12 @@ A three-layer sequence with one owner per layer:
 - The bus bar needs per-branch switching that is fast enough and does not cause a voltage spike when it opens under regen.
 - A drive on its logic feed (ADR-0004) can still report after layer 3 cuts its power.
 
+## Settled 2026-10-19
+
+- On e-stop the Racer does not push energy back onto the bus. It stops the motor with its brake resistor and, later, an active-release solenoid disk brake.
+
 ## Questions to settle
 
 - What bound for layer 3? The 200 ms watchdog plus ramp time at the default 200 rpm/s is over a second at speed.
 - What happens at layer 3 when the bus bar opens a branch while the motor is generating?
-- Does the hold need a mechanical brake behind it for power loss? The chair's own brakes "take over" per the API doc. Which brakes, and who releases them?
+- Does the brake solenoid run from the drive's motion output (any cut engages it), with a 300 to 500 ms hardware hold-up so the electrical stop happens first?
