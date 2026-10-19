@@ -1,0 +1,89 @@
+/* SPACE site layout on top of alex-style tokens.css */
+body { margin: 0; }
+.ax-page.wide { max-width: 1320px; }
+.nav { display: flex; flex-wrap: wrap; gap: 18px; align-items: baseline; margin-bottom: 18px; font: 11px var(--ax-font-mono); text-transform: uppercase; letter-spacing: 0.1em; }
+.nav a { color: var(--ax-muted); text-decoration: none; }
+.nav a:hover { color: var(--ax-ink); }
+.nav a[aria-current] { color: var(--ax-accent); }
+.nav .brand { font: 700 13px var(--ax-font-title); letter-spacing: 0.14em; color: var(--ax-ink); margin-right: 8px; }
+.controls { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.ax a { color: var(--ax-ink); text-decoration-color: var(--ax-border-strong); text-underline-offset: 3px; }
+.ax a:hover { color: var(--ax-accent); text-decoration-color: var(--ax-accent); }
+.ax a.ax-btn { text-decoration: none; }
+.ax a.ax-btn.primary { color: var(--ax-on-accent); }
+.ax-grid.two { grid-template-columns: 1fr 1fr; }
+@media (max-width: 860px) { .ax-grid.two, .adr-layout, .prd-layout { grid-template-columns: 1fr !important; } .toc { position: static !important; max-height: none !important; } }
+.small { font-size: 12px; }
+td.note { color: var(--ax-muted); font-size: 12px; }
+
+/* Pillars */
+.pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--ax-gap); margin-top: 6px; }
+@media (max-width: 860px) { .pillars { grid-template-columns: 1fr 1fr; } }
+.pcol { display: flex; flex-direction: column; gap: 6px; }
+.pcol > .ax-label { padding-bottom: 6px; border-bottom: 1px solid var(--ax-border); margin-bottom: 2px; }
+.nodecard { display: grid; gap: 2px; padding: 9px 10px; border: 1px solid var(--ax-border); text-decoration: none !important; transition: border-color 0.15s, background 0.15s; }
+.nodecard:hover { border-color: var(--ax-accent); background: rgba(var(--ax-accent-rgb), 0.05); }
+.nodecard b { font: 500 13px var(--ax-font-title); letter-spacing: 0.06em; text-transform: uppercase; }
+.nodecard .ax-sub { margin-top: 0; }
+.pillar { display: inline-grid; place-items: center; width: 18px; height: 18px; margin-right: 3px; font: 700 10px var(--ax-font-mono); color: var(--ax-bg); background: var(--ax-muted); }
+.pillar.p-S { background: var(--ax-s5); } .pillar.p-P { background: var(--ax-s2); } .pillar.p-A { background: var(--ax-s1); } .pillar.p-C { background: var(--ax-s3); }
+
+/* Long-form prose */
+.doc { min-width: 0; }
+.doc > :first-child { margin-top: 0; }
+.doc h2 { font: 700 17px/1.2 var(--ax-font-title); letter-spacing: 0.08em; text-transform: uppercase; margin: 34px 0 10px; padding-top: 14px; border-top: 1px solid var(--ax-border); }
+.doc h2::before { content: "■ "; color: var(--ax-accent); font-size: 0.7em; vertical-align: 2px; }
+.doc h3 { font: 500 14px/1.3 var(--ax-font-title); letter-spacing: 0.1em; text-transform: uppercase; margin: 24px 0 8px; color: var(--ax-ink); }
+.doc h4 { font: 500 13px var(--ax-font); margin: 18px 0 6px; }
+.doc p, .doc li { max-width: 78ch; }
+.doc li { margin: 3px 0; }
+.doc ul, .doc ol { padding-left: 20px; }
+.doc blockquote { margin: 12px 0; padding: 8px 14px; border-left: 2px solid var(--ax-accent); background: var(--ax-panel); color: var(--ax-ink); }
+.doc blockquote p { margin: 4px 0; }
+.doc pre { background: var(--ax-panel); border: 1px solid var(--ax-border); padding: 12px 14px; overflow-x: auto; font: 12px/1.45 var(--ax-font-mono); }
+.doc pre code { color: var(--ax-ink); font-size: 1em; }
+.doc hr { border: 0; border-top: 1px solid var(--ax-border); margin: 24px 0; }
+.doc strong { font-weight: 500; color: var(--ax-ink); }
+.tbl { overflow-x: auto; margin: 10px 0 16px; border: 1px solid var(--ax-border); background: var(--ax-panel); }
+.tbl table { font-size: 13px; }
+.tbl td, .tbl th { vertical-align: top; }
+.notes { margin-top: 18px; }
+.tag { font: 500 9px var(--ax-font-mono); letter-spacing: 0.1em; padding: 1px 4px; border: 1px solid var(--ax-border-strong); color: var(--ax-muted); white-space: nowrap; vertical-align: 1px; }
+.tag-measured { border-color: var(--ax-good); color: var(--ax-good); }
+
+/* ADR and node pages: prose plus a sticky side panel */
+.adr-layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 28px; align-items: start; }
+.side { position: sticky; top: 16px; display: grid; gap: 6px; }
+.side .ax-label { margin-top: 8px; }
+.side .ax-label:first-child { margin-top: 0; }
+.stack { display: grid; gap: 6px; }
+.stack .ax-btn { justify-content: center; }
+.pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--ax-border); font: 12px var(--ax-font-mono); }
+
+/* PRD: contents rail */
+.prd-layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 32px; align-items: start; }
+.toc { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; display: grid; gap: 2px; font: 12px/1.4 var(--ax-font-mono); }
+.toc .ax-label { margin-bottom: 6px; }
+.toc a { color: var(--ax-muted); text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.toc a:hover, .toc a.on { color: var(--ax-ink); border-left-color: var(--ax-accent); }
+.banner { margin-bottom: 20px; color: var(--ax-muted); }
+
+/* Diagram */
+.diagram { margin: 12px 0 20px; padding: 14px; background: var(--ax-panel); border: 1px solid var(--ax-border); }
+.diagram svg { max-width: 960px; margin: 0 auto; }
+.diagram .box { fill: var(--ax-bg); stroke: var(--ax-border-strong); stroke-width: 1; }
+.diagram .zone { fill: none; stroke: var(--ax-accent); stroke-width: 1; stroke-dasharray: 4 3; }
+.diagram text { text-anchor: middle; }
+.diagram text.t { font: 700 12px var(--ax-font-title); letter-spacing: 0.08em; fill: var(--ax-ink); }
+.diagram text.s { font: 10px var(--ax-font-mono); fill: var(--ax-muted); }
+.diagram text.lbl { font: 10px var(--ax-font-mono); fill: var(--ax-muted); }
+.diagram .drop line { stroke: var(--ax-s5); stroke-width: 2; }
+
+.foot { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 48px; padding-top: 14px; border-top: 1px solid var(--ax-border); font: 11px var(--ax-font-mono); color: var(--ax-muted); }
+.foot a { color: var(--ax-muted); }
+
+@media print { .nav, .controls, .toc, .foot, .side .stack { display: none !important; } .prd-layout, .adr-layout { grid-template-columns: 1fr; } }
+
+td.ax-n, td:first-child.ax-n { white-space: nowrap; }
+.doc hr { display: none; }
+.diagram text.lbl { text-anchor: start; }

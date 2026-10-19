@@ -1,0 +1,14 @@
+{
+  "name": "space-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "serve": "node build.mjs && python3 -m http.server 8765 -d dist"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "marked": "^15.0.0",
+    "marked-gfm-heading-id": "^4.1.0"
+  }
+}
