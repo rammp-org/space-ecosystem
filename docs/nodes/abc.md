@@ -1,22 +1,26 @@
 ---
 name: ABC
 full: ATOS Bridge Comms
-pillar: C
 stage: bring-up
 order: 2
 mcu: ESP32 (WROOM-32UE)
 link: 100BASE-TX, LAN8720A over RMII
 power: 5 V
 repos: [pace-abc/ATOS-Bridge-Comms (local)]
+kind: module
+family: I/O node
+pillars: [C]
 ---
 
-Ethernet to UART/USB bridge. Draft layout finished. LED and UDP-echo bring-up firmware written.
+A small module that bridges things too small to be their own RTPS node onto ATOS: an Ethernet bridge with GPIO. The example use is a single button somewhere on the wheelchair. Very preliminary.
 
-## Where it stands
+Hardware today: plain ESP32 (WROOM-32UE), LAN8720A PHY over RMII, USB-C with a CH340C, draft layout finished, LED and UDP-echo bring-up firmware written.
 
-- The PRD gave ABC the supervisor role (B-05). The MIB took that role instead, so ABC's scope is now a bridge between legacy serial equipment and the SPACE network, plus a bench DHCP server.
-- ATOS is the robot software platform that SPACE is the Layer 1 hardware profile for.
+## Where it fits
+
+- It belongs to the [I/O node](io-node.md) family. It could become the smallest member of that family, or a prototype for it.
+- PRD v0.1 gave ABC the supervisor role. That role went to the MIB application instead.
 
 ## Open
 
-- Does ABC survive a zonal architecture, or does the zone controller absorb it? See [ADR-0002](../adr/0002-zonal-architecture.md).
+- Is ABC a separate module, or the first revision of the I/O node?

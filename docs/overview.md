@@ -75,8 +75,8 @@ families:
   - name: I/O node and safety I/O
     what: "A native RTPS participant that publishes a manifest for everything behind it. CAN, RC servo PWM, Dynamixel TTL and RS-485, Qwiic and STEMMA QT. Digital and analog I/O for bumpers, cliff sensors, switches, e-stop. A watchdog with a safe state for every device it fronts. Secure boot and OTA as a secondary agent under the main ATOS agent."
     stage: concept
-    node: nodes/sense.md
-    label: Sense nodes
+    node: nodes/io-node.md
+    label: I/O node
   - name: Net infrastructure and the Devkit
     what: "We build only what the RAMMP prototypes need."
     stage: concept
@@ -113,19 +113,19 @@ evidence:
 
 open:
   - q: "Do we believe the AI-assisted embedded development thesis, and what does our own firmware work this year show?"
-    since: ""
+    decision: ai-thesis
   - q: "Does anyone disagree with any item on the 'is not' list?"
-    since: ""
+    decision: is-not-list
   - q: "The net physical layer: Ethernet speed and PHY, WiFi, and which PoE connector (RJ45 or M8/M12)."
-    since: "New direction: single-pair Ethernet for smaller components. See ADR-0003, ADR-0010, ADR-0011."
+    decision: physical-layer
   - q: "Voltages at the port. Proposal: battery bus 12 to 48 V for drives and power distribution only; PoE on the net port; bus-set voltages on secondary ports."
-    since: "Bus bar brief and grilling: drives on bus bar outputs, PoE for loads up to about 71 W. See ADR-0004 and the Questions page."
+    decision: port-power
   - q: "Does SPACE own battery management, or only spec the interface?"
-    since: "Bus bar brief: BMS out of scope; the bus bar treats the pack as a voltage source."
+    decision: bms
   - q: "PoE budget per node?"
-    since: ""
+    decision: poe-budget
   - q: "Which MCU class: standardise on one ESP32 part, or allow Cortex-M behind the same firmware interface?"
-    since: "See ADR-0010."
+    decision: mcu-class
   - q: "Where do our RAMMP prototypes sit on the pathway today?"
-    since: ""
+    decision: pathway-position
 ---

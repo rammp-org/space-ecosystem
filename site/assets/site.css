@@ -111,3 +111,5 @@ a.famcard:hover { border-color: var(--ax-accent); background: rgba(var(--ax-acce
 .principles li { margin: 6px 0; }
 .principles li::marker { font-family: var(--ax-font-mono); color: var(--ax-accent); }
 .since { border-color: var(--ax-accent); }
+.pillars.five { grid-template-columns: repeat(5, 1fr); }
+@media (max-width: 1000px) { .pillars.five { grid-template-columns: 1fr 1fr; } }

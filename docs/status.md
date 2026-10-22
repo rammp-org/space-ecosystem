@@ -10,7 +10,7 @@ overrides:
     source: rammp-rtps/docs/RACER-MOTOR-API.md
   - id: F-10
     status: Partial
-    note: "200 ms command watchdog is in firmware. It ends in SAFE_STOP then an active HOLD, which differs from the PRD's coast-out STOPPING. See ADR-0005."
+    note: "200 ms command watchdog is in firmware. It ends in SAFE_STOP then an active HOLD, which differs from the PRD's coast-out STOPPING. See the Stop behaviour decision."
     source: rammp-rtps/docs/RACER-MOTOR-API.md
   - id: E-08
     status: Partial
@@ -22,7 +22,7 @@ overrides:
     source: pace-racer-fw feat/atos-drive
   - id: B-05
     status: Open
-    note: "Supervisor role went to the MIB, not ABC. Revisit ABC's scope in ADR-0002."
+    note: "Supervisor role went to the MIB application. ABC is now a small I/O module: an Ethernet bridge with GPIO."
     source: RAMMP-mib-fw
 ---
 
@@ -45,5 +45,5 @@ The PRD was frozen on 2026-09-14. Work has moved on in other repos since then. T
 
 ## New direction (not yet in the PRD)
 
-- The project renamed PACE to SPACE (ADR-0001).
-- Smart bus bars, managed switches, and single-pair Ethernet with power over data lines. The proposed decisions ADR-0002 through ADR-0012 cover these.
+- The project renamed PACE to SPACE (the Rename to SPACE decision).
+- Smart bus bars, managed switches, and single-pair Ethernet with power over data lines. The proposed decisions the open decisions cover these.

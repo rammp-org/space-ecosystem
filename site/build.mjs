@@ -1,4 +1,4 @@
-// Renders the repo's Markdown (PRD, ADRs, node pages, status) into a static site in dist/.
+// Renders the repo's Markdown (overview, decisions, module pages, status, PRD) into a static site in dist/.
 // Run from site/: `node build.mjs`. No framework; one page template, alex-style tokens.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -22,10 +22,12 @@ const posix = p => p.split(path.sep).join('/');
 const pages = [];
 const page = (src, out, extra = {}) => { const p = { src, out, ...extra }; pages.push(p); return p; };
 
-const adrs = fs.readdirSync(path.join(ROOT, 'docs/adr')).filter(f => /^\d{4}-.*\.md$/.test(f)).sort().map(f => {
-  const { data, content } = matter(read(`docs/adr/${f}`)); data.date = data.date instanceof Date ? data.date.toISOString().slice(0, 10) : data.date;
-  return page(`docs/adr/${f}`, `decisions/${data.id}.html`, { kind: 'adr', data, content });
-});
+const AREAS_D = ['Scope', 'Power', 'Safety', 'Network', 'Platform'];
+const decisions = fs.readdirSync(path.join(ROOT, 'docs/decisions')).filter(f => f.endsWith('.md')).map(f => {
+  const { data, content } = matter(read(`docs/decisions/${f}`));
+  return page(`docs/decisions/${f}`, `decisions/${f.replace(/\.md$/, '.html')}`, { kind: 'decision', data, content, slug: f.replace(/\.md$/, '') });
+}).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+const bySlug = new Map(decisions.map(d => [d.slug, d]));
 const STAGES = ['concept', 'schematic', 'layout', 'bring-up', 'in development', 'in use', 'validated'];
 const nodes = fs.readdirSync(path.join(ROOT, 'docs/nodes')).filter(f => f.endsWith('.md')).map(f => {
   const { data, content } = matter(read(`docs/nodes/${f}`));
@@ -36,10 +38,9 @@ const md = (src, out, kind) => { const { data, content } = matter(read(src)); fo
 const overview = md('docs/overview.md', 'index.html', 'overview');
 const status = md('docs/status.md', 'status.html', 'status');
 const arch = md('docs/architecture.md', 'architecture.html', 'doc');
-const questions = md('docs/open-questions.md', 'questions.html', 'doc');
 const prd = md('PACE_ECOSYSTEM_PRD.md', 'prd.html', 'prd');
 const glossary = md('CONTEXT.md', 'glossary.html', 'doc');
-page('docs/adr', 'decisions/index.html', { kind: 'adr-index' });
+page('docs/decisions', 'decisions/index.html', { kind: 'decision-index' });
 page('docs/nodes', 'nodes/index.html', { kind: 'node-index' });
 
 const bySrc = new Map(pages.map(p => [p.src, p]));
@@ -63,7 +64,7 @@ function renderMd(text, cur) {
 }
 const rel = (from, to) => posix(path.relative(path.dirname(from.out), to)) || path.basename(to);
 
-const STATUS_CLASS = { met: 'good', partial: 'warning', open: '', accepted: 'good', proposed: 'warning', rejected: 'critical', superseded: '' };
+const STATUS_CLASS = { met: 'good', partial: 'warning', open: '', decided: 'good', leaning: 'warning', parked: '', accepted: 'good', proposed: 'warning', rejected: 'critical', superseded: '' };
 const statusChip = s => `<span class="ax-status ${STATUS_CLASS[String(s).toLowerCase()] ?? ''}">${esc(cap(s))}</span>`;
 const cap = s => String(s).charAt(0).toUpperCase() + String(s).slice(1);
 
@@ -92,7 +93,7 @@ const issues = section('## 14. Known issues').split('\n').filter(l => /^\| \d+ \
 const roadmap = section('### 15.1').split('\n').filter(l => /^\| \*\*R\d/.test(l)).map(l => { const c = cells(l); return { m: plain(c[0]).replace(' — ', ': '), what: plain(c[1]), exit: plain(c[2]) }; });
 
 // ── Template ────────────────────────────────────────────────────────
-const NAV = [['index.html', 'Overview'], ['status.html', 'Status'], ['architecture.html', 'Architecture'], ['decisions/index.html', 'Decisions'], ['nodes/index.html', 'Nodes'], ['questions.html', 'Questions'], ['prd.html', 'PRD v0.1'], ['glossary.html', 'Glossary']];
+const NAV = [['index.html', 'Overview'], ['status.html', 'Status'], ['architecture.html', 'Architecture'], ['decisions/index.html', 'Decisions'], ['nodes/index.html', 'Modules'], ['prd.html', 'PRD v0.1'], ['glossary.html', 'Glossary']];
 
 function shell(p, { title, meta = [], controls = '', body, wide = false }) {
   const to = target => rel(p, target);
@@ -137,8 +138,11 @@ ${body}
 </html>`;
 }
 
-const discussUrl = a => `${GH}/issues/new?title=${encodeURIComponent(`ADR-${a.data.id}: ${a.data.title}`)}&labels=decision&body=${encodeURIComponent(`Discussion for [ADR-${a.data.id}](${GH}/blob/${cfg.branch}/${a.src}).\n\n`)}`;
-const threadsUrl = a => `${GH}/issues?q=${encodeURIComponent(`is:issue "ADR-${a.data.id}"`)}`;
+const discussUrl = d => `${GH}/issues/new?title=${encodeURIComponent(d.data.question)}&labels=decision&body=${encodeURIComponent(`Discussion for [${d.data.question}](${GH}/blob/${cfg.branch}/${d.src}).\n\n`)}`;
+const threadsUrl = d => `${GH}/issues?q=${encodeURIComponent(`is:issue "${d.slug}"`)}`;
+const FAMILIES = ['Power distribution', 'Motor drive', 'I/O node', 'Net infrastructure'];
+const modules = nodes.filter(n => n.data.kind !== 'application'), apps = nodes.filter(n => n.data.kind === 'application');
+const decisionRows = (p, ds) => `<table><thead><tr><th>Question</th><th>Status</th><th>Source</th></tr></thead><tbody>${ds.map(d => `<tr><td><a href="${rel(p, d.out)}">${esc(d.data.question)}</a></td><td>${statusChip(d.data.status)}</td><td class="note">${esc(d.data.source)}</td></tr>`).join('')}</tbody></table>`;
 const pillarTags = ps => (ps || []).map(x => `<span class="pillar p-${x}">${x}</span>`).join('');
 const stageChip = n => n.data.needs_info ? `<span class="ax-status warning">Needs info</span>` : `<span class="ax-status ${n.data.stage === 'validated' || n.data.stage === 'in use' ? 'good' : ''}">${esc(cap(n.data.stage))}</span>`;
 const today = new Date().toISOString().slice(0, 10);
@@ -148,27 +152,27 @@ const render = {};
 
 render.status = p => {
   const count = s => reqs.filter(r => r.status === s).length;
-  const proposed = adrs.filter(a => a.data.status === 'proposed');
+  const live = decisions.filter(d => ['open', 'leaning'].includes(d.data.status));
   const high = issues.filter(i => /high/i.test(i.sev));
   const areaRows = Object.entries(AREAS).map(([k, name]) => {
     const rs = reqs.filter(r => r.area === k);
     return { k, name, met: rs.filter(r => r.status === 'Met').length, partial: rs.filter(r => r.status === 'Partial').length, open: rs.filter(r => r.status === 'Open').length, n: rs.length };
   });
-  const pillarCol = (k, label) => `<div class="pcol"><div class="ax-label"><span class="pillar p-${k}">${k}</span> ${label}</div>${
-    nodes.filter(n => n.data.pillar === k).map(n => `<a class="nodecard" href="${rel(p, n.out)}"><b>${esc(n.data.name)}</b>${stageChip(n)}<span class="ax-sub">${esc(n.data.mcu)}</span></a>`).join('') || '<div class="ax-cap">No nodes yet.</div>'}</div>`;
+  const pillarCol = (k, label) => `<div class="pcol"><div class="ax-label">${label}</div>${
+    (k === 'apps' ? apps : modules.filter(n => n.data.family === k)).map(n => `<a class="nodecard" href="${rel(p, n.out)}"><b>${esc(n.data.name)}</b>${stageChip(n)}<span class="ax-sub">${esc(n.data.mcu)}</span></a>`).join('') || '<div class="ax-cap">No nodes yet.</div>'}</div>`;
   const tile = (label, value, sub) => `<div class="ax-tile"><div class="ax-label">${label}</div><div class="ax-value">${value}</div><div class="ax-sub">${sub}</div></div>`;
   const body = `
   <section class="ax-tiles">
-    ${tile('Nodes tracked', nodes.length, `${nodes.filter(n => ['validated', 'in use'].includes(n.data.stage)).length} in use or validated`)}
+    ${tile('Modules', modules.length, `${apps.length} applications built on them`)}
     ${tile('Requirements met', `${count('Met')}<small>of ${reqs.length}</small>`, `${count('Partial')} partial · ${count('Open')} open`)}
-    ${tile('Decisions to make', proposed.length, `${adrs.filter(a => a.data.status === 'accepted').length} accepted`)}
+    ${tile('Decisions to make', live.length, `${decisions.filter(d => d.data.status === 'decided').length} decided`)}
     ${tile('High-severity issues', high.length, 'from PRD §14')}
   </section>
 
   <section class="ax-panel" style="margin-bottom:8px">
-    <h2>Nodes by pillar</h2>
-    <div class="ax-cap">Source: PRD v0.1, the bus bar brief, and boards found in rammp-org repos (not yet confirmed with their owners). Zone controller and sense nodes are proposals.</div>
-    <div class="pillars">${pillarCol('S', 'Sensing')}${pillarCol('P', 'Power')}${pillarCol('A', 'Actuation')}${pillarCol('C', 'Control / comms')}</div>
+    <h2>Modules by family, and the applications built on them</h2>
+    <div class="ax-cap">Source: the October deck, PRD v0.1, the bus bar brief, and boards found in rammp-org repos (not yet confirmed with their owners).</div>
+    <div class="pillars five">${FAMILIES.map(f => pillarCol(f, f)).join('')}${pillarCol('apps', 'Applications')}</div>
   </section>
 
   <section class="ax-grid two">
@@ -187,11 +191,9 @@ render.status = p => {
   </section>
 
   <section class="ax-panel" style="margin-bottom:8px">
-    <h2>Decision queue</h2>
-    <div class="ax-cap">ADR-0002 to 0012 were drafted by Claude from the 2026-10-19 single-pair Ethernet discussion. None has been reviewed by the team.</div>
-    <table><thead><tr><th>ADR</th><th>Decision</th><th>Pillars</th><th>Status</th></tr></thead><tbody>
-    ${adrs.map(a => `<tr><td class="ax-n"><a href="${rel(p, a.out)}">${a.data.id}</a></td><td><a href="${rel(p, a.out)}">${esc(a.data.title)}</a></td><td>${pillarTags(a.data.pillars)}</td><td>${statusChip(a.data.status)}</td></tr>`).join('')}
-    </tbody></table>
+    <h2>Decisions still to make</h2>
+    <div class="ax-cap">Open and leaning. The full list, including decided and parked, is on the decisions page.</div>
+    ${decisionRows(p, live)}
   </section>
 
   <section class="ax-grid two">
@@ -225,7 +227,7 @@ render.overview = p => {
   const li = xs => `<ul class="plain">${xs.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
   const pairs = xs => xs.map(([k, v]) => `<div class="pair"><div class="ax-label">${esc(k)}</div><div>${esc(v)}</div></div>`).join('');
   const sec = (title, cap, inner, cls = '') => `<section class="ax-panel ov ${cls}"><h2>${title}</h2>${cap ? `<div class="ax-cap">${cap}</div>` : ''}${inner}</section>`;
-  const fam = f => `<a class="famcard" href="${to(f.node)}"><div class="ax-label">${esc(f.name)}</div><b>${esc(f.label)}</b><span class="ax-status ${f.stage === 'in use' ? 'good' : ''}">${esc(cap(f.stage))}</span><p>${esc(f.what)}</p></a>`;
+  const fam = f => `<a class="famcard" href="${rel(p, f.node.replace(/\.md$/, '.html'))}"><div class="ax-label">${esc(f.name)}</div><b>${esc(f.label)}</b><span class="ax-status ${f.stage === 'in use' ? 'good' : ''}">${esc(cap(f.stage))}</span><p>${esc(f.what)}</p></a>`;
   const body = `
   <section class="hero">
     <p class="lede">${esc(d.lede)}</p>
@@ -270,53 +272,49 @@ render.overview = p => {
     ${sec('Every module ships with its evidence', 'Knowledge that lives with the design lets open hardware reach more places', li(d.evidence))}
   </div>
 
-  ${sec('Open questions from the deck', 'The right-hand column is what has happened since the presentation', `<table><thead><tr><th class="num">#</th><th>Question</th><th>Since the deck</th></tr></thead><tbody>${d.open.map((o, i) => `<tr><td class="num">${i + 1}</td><td>${esc(o.q)}</td><td class="note">${esc(o.since) || '<span class="ax-muted">Not discussed yet</span>'}</td></tr>`).join('')}</tbody></table>`)}
+  ${sec('Open questions from the deck', 'Each links to its decision page, which records what has happened since', `<table><thead><tr><th>Question</th><th>Status now</th></tr></thead><tbody>${d.open.map(o => { const x = bySlug.get(o.decision); return `<tr><td>${x ? `<a href="${rel(p, x.out)}">${esc(o.q)}</a>` : esc(o.q)}</td><td>${x ? statusChip(x.data.status) : ''}</td></tr>`; }).join('')}</tbody></table>`)}
 
   <section class="ax-panel ov since">
     <h2>Since the deck</h2>
     <div class="ax-cap">New direction, not in the presentation</div>
-    <p>Sensing joins the name: SPACE. Smart bus bars, managed switches, and single-pair Ethernet (10BASE-T1S, 100BASE-T1) for smaller components, with RJ45 kept for high-compute nodes. The <a href="${rel(p, 'nodes/smart-bus-bar.html')}">smart bus bar brief</a> is the first concrete piece. ADR-0002 to 0012 on the <a href="${rel(p, 'decisions/index.html')}">decisions page</a> are Claude-drafted proposals for discussion, and the <a href="${rel(p, 'questions.html')}">questions page</a> records what the team has settled so far.</p>
+    <p>Sensing joins the name: SPACE. Smart bus bars, managed switches, and single-pair Ethernet (10BASE-T1S, 100BASE-T1) for smaller components, with RJ45 kept for high-compute nodes. The <a href="${rel(p, 'nodes/smart-bus-bar.html')}">smart bus bar brief</a> is the first concrete piece. Every open question, from the deck, the bus bar brief, the PRD, and our grilling sessions, is on the <a href="${rel(p, 'decisions/index.html')}">decisions page</a>.</p>
   </section>`;
-  return shell(p, { title: 'SPACE', meta: ['Sensing, Power, Actuation, and Control Electronics', esc(d.source)], controls: `<a class="ax-btn primary" href="${rel(p, 'questions.html')}" data-fx="ripple">Open questions</a>`, body });
+  return shell(p, { title: 'SPACE', meta: ['Sensing, Power, Actuation, and Control Electronics', esc(d.source)], controls: `<a class="ax-btn primary" href="${rel(p, 'decisions/index.html')}" data-fx="ripple">Decisions</a>`, body });
 };
 
-render.adr = p => {
-  const i = adrs.indexOf(p), prev = adrs[i - 1], next = adrs[i + 1];
-  const draft = p.data.origin === 'claude-draft' ? `<div class="banner ax-panel">Drafted by Claude from the 2026-10-19 discussion about single-pair Ethernet and smart bus bars. Nothing here has been reviewed by the team. Argue with it in a thread.</div>` : '';
+render.decision = p => {
+  const draft = p.data.draft ? `<div class="banner ax-panel">The background on this page was drafted by Claude on 2026-10-19 and has not been reviewed by the team.</div>` : '';
+  const sibs = decisions.filter(d => d.data.area === p.data.area), i = sibs.indexOf(p), prev = sibs[i - 1], next = sibs[i + 1];
   const body = `${draft}
   <div class="adr-layout">
     <article class="doc">${renderMd(p.content, p).html}</article>
     <aside class="ax-panel side">
       <div class="ax-label">Status</div><div>${statusChip(p.data.status)}</div>
-      <div class="ax-label">Pillars</div><div>${pillarTags(p.data.pillars)}</div>
-      <div class="ax-label">PRD sections affected</div><div class="ax-mono small">${(p.data.prd || []).map(esc).join(' · ') || 'none'}</div>
+      <div class="ax-label">Area</div><div>${esc(p.data.area)}</div>
+      <div class="ax-label">Came from</div><div class="small">${esc(p.data.source)}</div>
       <div class="ax-label">Discussion</div>
       <div class="stack"><a class="ax-btn" href="${threadsUrl(p)}">Read threads</a><a class="ax-btn" href="${discussUrl(p)}">Start a thread</a></div>
     </aside>
   </div>
-  <nav class="pager">${prev ? `<a href="${rel(p, prev.out)}">ADR-${prev.data.id} ${esc(prev.data.title)}</a>` : '<span></span>'}${next ? `<a href="${rel(p, next.out)}">ADR-${next.data.id} ${esc(next.data.title)}</a>` : ''}</nav>`;
-  return shell(p, { title: `ADR-${p.data.id} ${p.data.title}`, meta: [cap(p.data.status), esc(p.data.date)], body });
+  <nav class="pager">${prev ? `<a href="${rel(p, prev.out)}">${esc(prev.data.question)}</a>` : '<span></span>'}${next ? `<a href="${rel(p, next.out)}">${esc(next.data.question)}</a>` : ''}</nav>`;
+  return shell(p, { title: p.data.question, meta: [esc(p.data.area), cap(p.data.status)], body });
 };
 
-render['adr-index'] = p => {
+render['decision-index'] = p => {
+  const count = st => decisions.filter(d => d.data.status === st).length;
   const body = `
-  <section class="ax-panel">
-    <h2>Architecture decision records</h2>
-    <div class="ax-cap">Each ADR is a Markdown file in <code>docs/adr/</code>. Argue in the GitHub thread, then change the file.</div>
-    <table><thead><tr><th>ADR</th><th>Decision</th><th>Pillars</th><th>PRD sections</th><th>Status</th><th>Discuss</th></tr></thead><tbody>
-    ${adrs.map(a => `<tr><td class="ax-n"><a href="${rel(p, a.out)}">${a.data.id}</a></td><td><a href="${rel(p, a.out)}">${esc(a.data.title)}</a></td><td>${pillarTags(a.data.pillars)}</td><td class="ax-mono small">${(a.data.prd || []).map(esc).join(' · ')}</td><td>${statusChip(a.data.status)}</td><td><a href="${threadsUrl(a)}">threads</a></td></tr>`).join('')}
-    </tbody></table>
-  </section>
+  <section class="ax-tiles">${['open', 'leaning', 'decided', 'parked'].map(st => `<div class="ax-tile"><div class="ax-label">${cap(st)}</div><div class="ax-value">${count(st)}</div><div class="ax-sub">${{ open: 'not discussed or no lean yet', leaning: 'a recommendation to confirm', decided: 'settled; change it in a PR', parked: 'revisit later' }[st]}</div></div>`).join('')}</section>
+  ${AREAS_D.map(a => `<section class="ax-panel ov"><h2>${a}</h2>${decisionRows(p, decisions.filter(d => d.data.area === a))}</section>`).join('')}
   <section class="doc notes">
     <h2>How a decision moves</h2>
-    <p>An ADR starts as <b>proposed</b> with a recommendation and a list of questions. Discussion happens in a GitHub issue titled with the ADR number. When the team agrees, someone edits the file: status becomes <b>accepted</b> (or <b>rejected</b>), the questions get answers, and the PRD sections it names get updated in the same pull request.</p>
+    <p>Each question is a Markdown file in <code>docs/decisions/</code>. It starts <b>open</b>. When someone proposes an answer it becomes <b>leaning</b>. Talk it through in a GitHub thread (the buttons on each page), then edit the file: set <b>decided</b> and write the answer, or <b>parked</b> if it can wait.</p>
   </section>`;
-  return shell(p, { title: 'Decisions', meta: [`${adrs.length} records`, `${adrs.filter(a => a.data.status === 'proposed').length} proposed`], body });
+  return shell(p, { title: 'Decisions', meta: [`${decisions.length} questions`, 'from the deck, the bus bar brief, PRD v0.1, and grilling sessions'], body });
 };
 
 render.node = p => {
   const d = p.data;
-  const facts = [['Pillar', `<span class="pillar p-${d.pillar}">${d.pillar}</span>`], ['Stage', stageChip(p)], ['MCU', esc(d.mcu)], ['Network', esc(d.link)], ['Power', esc(d.power)],
+  const facts = [[d.kind === 'application' ? 'Application' : 'Family', esc(d.family)], ['Pillars', pillarTags(d.pillars)], ['Stage', stageChip(p)], ['MCU', esc(d.mcu)], ['Network', esc(d.link)], ['Power', esc(d.power)],
     ['Repos', (d.repos || []).map(r => /^[\w.-]+\/[\w.-]+$/.test(r) ? `<a href="https://github.com/${r}">${esc(r)}</a>` : esc(r)).join('<br>') || '<span class="ax-muted">None yet</span>']];
   const body = `
   <div class="adr-layout">
@@ -327,15 +325,12 @@ render.node = p => {
 };
 
 render['node-index'] = p => {
+  const row = n => `<tr><td><a href="${rel(p, n.out)}">${esc(n.data.full || n.data.name)}</a></td><td>${pillarTags(n.data.pillars)}</td><td>${stageChip(n)}</td><td>${esc(n.data.mcu)}</td><td>${esc(n.data.link)}</td></tr>`;
+  const table = ns => `<table><thead><tr><th>Board</th><th>Pillars</th><th>Stage</th><th>MCU</th><th>Network today</th></tr></thead><tbody>${ns.map(row).join('')}</tbody></table>`;
   const body = `
-  <section class="ax-panel">
-    <h2>Nodes</h2>
-    <div class="ax-cap">Boards on or near the SPACE network, by pillar. Source: <code>docs/nodes/</code>.</div>
-    <table><thead><tr><th>Node</th><th>Pillar</th><th>Stage</th><th>MCU</th><th>Network today</th></tr></thead><tbody>
-    ${nodes.map(n => `<tr><td><a href="${rel(p, n.out)}">${esc(n.data.full || n.data.name)}</a></td><td><span class="pillar p-${n.data.pillar}">${n.data.pillar}</span></td><td>${stageChip(n)}</td><td>${esc(n.data.mcu)}</td><td>${esc(n.data.link)}</td></tr>`).join('')}
-    </tbody></table>
-  </section>`;
-  return shell(p, { title: 'Nodes', meta: [`${nodes.length} nodes`], body });
+  ${FAMILIES.map(f => `<section class="ax-panel ov"><h2>${f}</h2>${table(modules.filter(n => n.data.family === f))}</section>`).join('')}
+  <section class="ax-panel ov"><h2>Applications</h2><div class="ax-cap">Several modules put together for one robot. Robot-specific logic lives here, not in the modules.</div>${table(apps)}</section>`;
+  return shell(p, { title: 'Modules', meta: [`${modules.length} modules`, `${apps.length} applications`, 'pillar tags: S sensing, P power, A actuation, C control'], body });
 };
 
 render.doc = p => {

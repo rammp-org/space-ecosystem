@@ -1,13 +1,15 @@
 ---
 name: Brake resistor
 full: SPACE Brake-R
-pillar: P
 stage: layout
 order: 7
 mcu: none
 link: none
 power: 48 V bus, dissipates regen
 repos: [rammp-org/pace-brake-r]
+kind: module
+family: Power distribution
+pillars: [P]
 ---
 
 Brake resistor circuit that protects the battery on high-power motor controllers. KiCad design in the repo.

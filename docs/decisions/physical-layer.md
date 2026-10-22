@@ -1,14 +1,19 @@
 ---
-id: "0003"
-title: Physical link chosen by criticality, not bandwidth
-status: proposed
-origin: claude-draft
-date: 2026-10-19
-pillars: [S, A, C]
-prd: ["§3.3 item 2", "E-02", "H-07"]
+question: "Which physical layer does each module get?"
+area: Network
+status: open
+source: "October deck; Alex 2026-10-19"
+order: 23
+draft: true
 ---
 
 ## Context
+
+The deck left open Ethernet speed and PHY, WiFi, and the PoE connector. The new direction adds single-pair Ethernet (10BASE-T1S multidrop, 100BASE-T1 point-to-point) for smaller components, with RJ45 kept for high-compute nodes. The Claude draft below proposes choosing by criticality: anything that can move the person gets a point-to-point link.
+
+## Background (Claude draft, 2026-10-19, not reviewed)
+
+### Context
 
 The PRD made 100BASE-TX on RJ45 the only network. Single-pair Ethernet gives three useful physical layers:
 
@@ -22,12 +27,12 @@ As far as we know there is no 100 Mb/s multidrop standard, so "100BASE-T1S" does
 
 Bandwidth is not what limits the Racer. Measured ceilings: UDP transmit 1457 pps at 64 B, receive saturation about 1247 pps, RTPS delivery 485 Hz. That is about 1 Mb/s effective, limited by the MCU and the SPI MAC. A wheel streaming `MotorState` at 20 Hz uses 1.6 kB/s. Two Racers and a handful of sensors fit inside one 10BASE-T1S segment.
 
-## Options
+### Options
 
 1. Choose the PHY by bandwidth. Most nodes end up on 10BASE-T1S multidrop, the Racers included.
 2. Choose the PHY by criticality. A node whose failure or misbehaviour can move the chair gets its own point-to-point link. Everything else can share.
 
-## Recommendation
+### Recommendation
 
 Option 2:
 
@@ -39,13 +44,13 @@ Option 2:
 
 On a multidrop segment, one shorted node or a broken stub takes out every node on it. PLCA bounds how long one node can transmit, but it cannot isolate a physical short. A wheel drive cannot share that failure with a cup-holder light.
 
-## Consequences
+### Consequences
 
 - E-02 changes from "all nodes on 100BASE-TX" to "all nodes on IP over the PHY of their tier".
 - Zone controllers need some of each port type.
-- The Racer V2 PHY choice is ADR-0010.
+- The Racer V2 PHY choice is the "MCU class" decision.
 
-## Questions to settle
+### Questions to settle
 
 - Is a 10BASE-T1S point-to-point link acceptable for a drive? It is cheaper and keeps the ESP32-S3.
 - Which accessory actuators (seat, tilt, leg rests) count as "can move the person"? Those belong in the motion tier.

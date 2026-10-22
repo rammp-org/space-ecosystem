@@ -1,13 +1,15 @@
 ---
 name: Smart bus bar
 full: SPACE smart bus bar
-pillar: P
 stage: concept
 order: 6
 mcu: ESP32-S3 + W5500 (proposed, shares the Racer stack)
 link: 100BASE-TX via W5500 (proposed)
 power: 48 V nominal (40 to 54 V), XT90 in, XT30/XT60 out, ~14 outputs
 repos: []
+kind: module
+family: Power distribution
+pillars: [P, S]
 ---
 
 Concept brief written October 2026 and shared with hardware collaborators, who are reviewing the requirements. No schematic yet. The passive [power bus Gen 1.5](power-bus.md) is the board it replaces.
@@ -61,7 +63,7 @@ Other behaviour from the brief:
 - Reverse blocking: a single high-side MOSFET passes regen through its body diode even when off. Back-to-back MOSFETs on the drive outputs, everywhere, or nowhere for the prototype?
 - Whether drive outputs are fully reverse-blocking (recommended) while compute and accessory outputs use a plain high-side FET.
 - One board, or a controller board plus output boards. Left to the hardware collaborators.
-- Mapping outputs to network identities, since power and data arrive on separate connectors. Candidates: a provisioning table, a boot-time handshake where the load draws a recognisable current pattern, or pairing each output with a switch port ([ADR-0009](../adr/0009-identity-from-topology.md)).
+- Mapping outputs to network identities, since power and data arrive on separate connectors. Candidates: a provisioning table, a boot-time handshake where the load draws a recognisable current pattern, or pairing each output with a switch port ([Output identity](../decisions/output-identity.md)).
 - Who owns the e-stop (recommended: the bus bar): it takes the e-stop out of band from Ethernet, cuts motion outputs, and publishes the STO event and any faults to the network.
 - Shed sequence for a chair on a slope. This needs testing.
 

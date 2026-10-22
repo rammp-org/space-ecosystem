@@ -1,18 +1,21 @@
 # SPACE: domain glossary
 
-SPACE (Sensing, Power, Actuation, and Control Electronics) is the family of networked electronics nodes for RAMMP assistive-mobility platforms. It was named PACE until 2026-10 (ADR-0001).
+SPACE (Sensing, Power, Actuation, and Control Electronics) is the family of networked electronics nodes for RAMMP assistive-mobility platforms. It was named PACE until 2026-10 (the "Rename to SPACE" decision).
 
 ## Terms
 
 | Term | Meaning | Avoid |
 |---|---|---|
-| Node | One board with an MCU on the SPACE network. It has an identity and publishes status. | device, module |
-| Pillar | The class of a node: S (sensing), P (power), A (actuation), C (control/comms). | |
-| Zone | One region of the chair, served by a smart bus bar and a managed switch. Proposed in ADR-0002. | hub |
+| Node | Anything with an MCU on the RTPS net. It has an identity and publishes status. | device |
+| Module | A SPACE building block with one job: the Racer, power distribution, the I/O node. Grouped into families. | node, when the reusable-block meaning is intended |
+| Application | Several modules put together for one robot, with the robot-specific logic: the joystick/HMI, the MIB. | module |
+| Family | One of the deck's module groups: power distribution, motor drive, I/O node and safety I/O, net infrastructure and Devkit. | |
+| Pillar | A capability tag: S (sensing), P (power), A (actuation), C (control/comms). One module can carry several. | |
+| Zone | One region of the chair, served by a smart bus bar and a managed switch. Proposed in the "Zones" decision. | hub |
 | Smart bus bar | The P-pillar node that distributes 48 V to actuation branches with pre-charge, per-branch switching, and telemetry. | power board, PDU |
-| Tier | The class of physical link a node gets: compute, motion and command, or sense and accessory (ADR-0003). | |
-| Actuation domain | The switched 48 V power that feeds power stages only (ADR-0004). | |
-| Logic domain | The power that feeds MCUs, PHYs, and sensors, which stays up when actuation is off (ADR-0004). | |
+| Tier | The class of physical link a node gets: compute, motion and command, or sense and accessory (the "Physical layer" decision). | |
+| Actuation domain | The switched 48 V power that feeds power stages only (the "Port power" decision). | |
+| Logic domain | The power that feeds MCUs, PHYs, and sensors, which stays up when actuation is off (the "Port power" decision). | |
 | ATOS | The robot software platform. SPACE is its normative hardware profile for Layer 1 ("SPACE is to ATOS what Pixhawk is to PX4"). ATOS defines discovery, QoS, authentication, encryption, agents, and the hardware manifest. | |
 | Manifest | The ATOS descriptor each SPACE node publishes for itself and every device behind it. | |
 | I/O node | A SPACE node that fronts secondary buses (CAN, RC servo, Dynamixel, Qwiic) and plain or safety I/O, with a watchdog and safe state for each device. | |

@@ -1,6 +1,6 @@
 ---
 title: Architecture
-subtitle: Proposed zonal layout for SPACE. Nothing here is decided until the matching ADR is accepted.
+subtitle: Proposed zonal layout for SPACE. Nothing here is decided until the matching decision is.
 ---
 
 ## Reference topology
@@ -46,44 +46,44 @@ subtitle: Proposed zonal layout for SPACE. Nothing here is decided until the mat
   <path d="M495 444 V490 H20 V240 H280 V234" fill="none" stroke="var(--ax-s4)" stroke-width="2" stroke-dasharray="6 4"/>
   <text class="lbl" x="40" y="508" text-anchor="start">NC e-stop loop: opening it drops every actuation branch in hardware</text>
 </svg>
-<figcaption><b>Fig. 1.</b> One zone shown. A chair may have one central zone or a front and a rear zone (ADR-0002). Logic power rides on each single-pair link and is not drawn separately.</figcaption>
+<figcaption><b>Fig. 1.</b> One zone shown. A chair may have one central zone or a front and a rear zone (the "Zones" decision). Logic power rides on each single-pair link and is not drawn separately.</figcaption>
 </figure>
 
 ## Tiers
 
 | Tier | Link | Nodes | Decision |
 |---|---|---|---|
-| Compute | RJ45 100/1000BASE-T | Jetson, Pi, cameras | [ADR-0003](adr/0003-phy-tier-by-criticality.md) |
-| Motion and command | 100BASE-T1 point-to-point | Racers, HMI, MIB | [ADR-0003](adr/0003-phy-tier-by-criticality.md) |
-| Sense and accessory | 10BASE-T1S multidrop | IMU, load cells, limits, small actuators | [ADR-0003](adr/0003-phy-tier-by-criticality.md), [ADR-0007](adr/0007-edge-wire-protocol.md) |
+| Compute | RJ45 100/1000BASE-T | Jetson, Pi, cameras | [Physical layer](decisions/physical-layer.md) |
+| Motion and command | 100BASE-T1 point-to-point | Racers, HMI, MIB | [Physical layer](decisions/physical-layer.md) |
+| Sense and accessory | 10BASE-T1S multidrop | IMU, load cells, limits, small actuators | [Physical layer](decisions/physical-layer.md), [Edge protocol](decisions/edge-protocol.md) |
 
 ## Power domains
 
 | Domain | Source | Feeds | Decision |
 |---|---|---|---|
-| Actuation | Smart bus bar, 48 V branches | Power stages only | [ADR-0004](adr/0004-two-power-domains.md) |
-| Logic | PoDL, or a 24 V harness rail | MCU, PHY, sensors | [ADR-0004](adr/0004-two-power-domains.md) |
+| Actuation | Smart bus bar, 48 V branches | Power stages only | [Port power](decisions/port-power.md) |
+| Logic | PoDL, or a 24 V harness rail | MCU, PHY, sensors | [Port power](decisions/port-power.md) |
 
 ## Stopping
 
 | Layer | Owner | Trigger | Action | Decision |
 |---|---|---|---|---|
-| Network | MIB / supervisor | joystick released, planner stop | SAFE_STOP to each drive | [ADR-0005](adr/0005-stop-sequence-ss1.md) |
-| Node | Racer | SAFE_STOP, 200 ms command silence | ramp at `accel_limit`, then hold | [ADR-0005](adr/0005-stop-sequence-ss1.md) |
+| Network | MIB / supervisor | joystick released, planner stop | SAFE_STOP to each drive | [Stop behaviour](decisions/stop-behaviour.md) |
+| Node | Racer | SAFE_STOP, 200 ms command silence | ramp at `accel_limit`, then hold | [Stop behaviour](decisions/stop-behaviour.md) |
 | Node | Racer | ESTOP, guard fault | bridge Hi-Z | ATOS motor API |
-| Power | Smart bus bar | node not safe within bound | open the drive's 48 V branch | [ADR-0005](adr/0005-stop-sequence-ss1.md) |
-| Hardware | E-stop loop | button pressed, loop broken | open every actuation branch | [ADR-0006](adr/0006-hardwired-estop-loop.md) |
+| Power | Smart bus bar | node not safe within bound | open the drive's 48 V branch | [Stop behaviour](decisions/stop-behaviour.md) |
+| Hardware | E-stop loop | button pressed, loop broken | open every actuation branch | [E-stop chain](decisions/estop-chain.md) |
 
 ## Changes from PRD v0.1
 
 | PRD item | Was | Proposed |
 |---|---|---|
-| §3.2 pillars | P, A, C | S, P, A, C ([ADR-0001](adr/0001-rename-pace-to-space.md)) |
+| §3.2 pillars | P, A, C | S, P, A, C ([Rename to SPACE](decisions/rename-to-space.md)) |
 | §3.3 item 1 | one 48 V class for every node | two power domains |
 | §3.3 item 2, E-02 | 100BASE-TX everywhere | IP everywhere, PHY by tier |
-| §4.2 non-goal | no multi-axis sync | gPTP timestamps in every message ([ADR-0008](adr/0008-time-sync.md)) |
+| §4.2 non-goal | no multi-axis sync | gPTP timestamps in every message ([Time sync](decisions/time-sync.md)) |
 | §6.1 topology | flat star | zones |
 | F-04 | stop always coasts | SAFE_STOP holds, ESTOP coasts |
-| H-07 | "on-board Ethernet" | MCU/PHY platform choice ([ADR-0010](adr/0010-node-mcu-and-phy-platform.md)) |
+| H-07 | "on-board Ethernet" | MCU/PHY platform choice ([MCU class](decisions/mcu-class.md)) |
 | H-11, H-14, E-08 | Racer or ABC problems | zone and bus bar responsibilities |
 | Eco-5 | first P node is the last step | smart bus bar is a foundation item |

@@ -1,20 +1,24 @@
 ---
 name: HMI
-full: RAMMP HMI / joystick (RJM)
-pillar: C
+full: RAMMP joystick / HMI (name to confirm)
 stage: in use
 order: 4
 mcu: ESP32-P4 (M5Stack Tab5)
 link: 100BASE-TX via W5500 (SPI)
 power: TBD
 repos: [rammp-org/pace-hmi-fw, rammp-org/pace-hmi-pcb, rammp-org/pace-hmi-gui]
+kind: application
+family: RAMMP chair
+pillars: [C, S]
 ---
 
-Touch HMI and 3D hall joystick (X, Y, twist), haptics over a DRV2605. It follows RAMMP UI spec V2: locked, drive, seat, settings, diagnostics, log and bench screens.
+An application: several SPACE pieces put together for the chair. M5Stack Tab5 (ESP32-P4) with a touch screen, a 3D hall joystick (X, Y, twist), haptics over a DRV2605, and Ethernet RTPS with PoE. It runs the same espp stack as the Racer.
 
-The PRD listed "PACE Stick" as a future candidate. This node already exists.
+From the deck: "a PACE node that happens to be a screen". The chair's controller owns the state; the HMI shows it and asks for changes. If status is lost for two seconds the screen says link lost and refuses drive and seat. Seat commands are absolute targets, so a lost or repeated packet cannot drift the seat. Calibration, settings, self test, and logs all live on the node.
+
+The UI follows RAMMP UI spec V2: locked, drive, seat, settings, diagnostics, log, and bench screens.
 
 ## Questions for SPACE
 
-- The joystick is the highest-consequence input on the chair. It needs a point-to-point link plus the hardwired e-stop under [ADR-0003](../adr/0003-phy-tier-by-criticality.md) and [ADR-0006](../adr/0006-hardwired-estop-loop.md), not a multidrop slot.
-- It is an ESP32-P4 with a W5500, so it could use the P4's RMII MAC instead. That is evidence for [ADR-0010](../adr/0010-node-mcu-and-phy-platform.md).
+- The joystick is the highest-consequence input on the chair. It needs a point-to-point link and the e-stop chain. See [Physical layer](../decisions/physical-layer.md) and [E-stop chain](../decisions/estop-chain.md).
+- Which SPACE modules is it made of, and which parts are chair-specific? See [Modules vs applications](../decisions/modules-vs-applications.md).
