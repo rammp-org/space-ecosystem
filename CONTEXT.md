@@ -8,7 +8,7 @@ SPACE (Sensing, Power, Actuation, and Control Electronics) is the family of netw
 |---|---|---|
 | Node | Anything with an MCU on the RTPS net. It has an identity and publishes status. | device |
 | Module | A SPACE building block with one job: the Racer, power distribution, the I/O node. Grouped into families. | node, when the reusable-block meaning is intended |
-| Application | Several modules put together for one robot, with the robot-specific logic: the joystick/HMI, the MIB. | module |
+| Application | Several modules put together for one robot, with the robot-specific logic: the HMI on the Pixis board, the MIB. | module |
 | Family | One of the deck's module groups: power distribution, motor drive, I/O node and safety I/O, net infrastructure and Devkit. | |
 | Pillar | A capability tag: S (sensing), P (power), A (actuation), C (control/comms). One module can carry several. | |
 | Zone | One region of the chair, served by a smart bus bar and a managed switch. Proposed in the "Zones" decision. | hub |
@@ -29,4 +29,5 @@ SPACE (Sensing, Power, Actuation, and Control Electronics) is the family of netw
 | PoDL | Power over Data Lines, IEEE 802.3bu. DC power on a point-to-point single-pair link. | PoE (different standard) |
 | PLCA | Physical Layer Collision Avoidance. Round-robin transmit opportunities on a 10BASE-T1S multidrop segment. | |
 | gPTP | IEEE 802.1AS time synchronisation over switched Ethernet. | |
+| Pixis | Alain's PCB for the SPACE HMI: M5Stack Tab5, 3D hall joystick, haptics, Ethernet with PoE. | |
 | Stage | A node's maturity: concept, schematic, layout, bring-up, in development, in use, validated. | |

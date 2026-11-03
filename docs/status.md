@@ -38,12 +38,12 @@ The PRD was frozen on 2026-09-14. Work has moved on in other repos since then. T
 ## Nodes the PRD did not list
 
 - MIB (MEBot Interface Board), ESP32-P4, `RAMMP-mib-fw`. It is the supervisor: it runs DHCP, commands each wheel, and owns the deadman. Its README lists "control of PACE RACER motor controllers over PoE" as planned work.
-- HMI / joystick, M5Stack Tab5 (ESP32-P4) on the RAMMP HMI PCB, W5500 Ethernet, `pace-hmi-fw`. Its UI follows RAMMP UI spec V2 and is in daily use.
+- HMI / joystick, M5Stack Tab5 (ESP32-P4) on the Pixis PCB (Alain), W5500 Ethernet, `pace-hmi-fw`. Its UI follows RAMMP UI spec V2 and is in daily use.
 - Power bus Gen 1.5, `RAMMP-Electronics` branch `Gen1.5_powerbus` (Ariana, 2026-10-07). It is a passive distribution board: XT90 in, four XT60 out.
 - Brake resistor, `pace-brake-r`. It is a KiCad design for protecting the battery from regen on high-power controllers. The bus bar brief makes each Racer responsible for its own brake resistor.
 - Dyno torque bench, `dynopace`. A MotorGo Plink reads a DY-N-200 torque sensor over RS485.
 
 ## New direction (not yet in the PRD)
 
-- The project renamed PACE to SPACE (the Rename to SPACE decision).
-- Smart bus bars, managed switches, and single-pair Ethernet with power over data lines. The proposed decisions the open decisions cover these.
+- The project renamed PACE to SPACE.
+- Smart bus bars, managed switches, and single-pair Ethernet with power over data lines. The decisions page covers these.

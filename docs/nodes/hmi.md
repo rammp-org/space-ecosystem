@@ -1,6 +1,6 @@
 ---
-name: HMI
-full: RAMMP joystick / HMI (name to confirm)
+name: HMI (Pixis)
+full: SPACE HMI on the Pixis board
 stage: in use
 order: 4
 mcu: ESP32-P4 (M5Stack Tab5)
@@ -12,7 +12,7 @@ family: RAMMP chair
 pillars: [C, S]
 ---
 
-An application: several SPACE pieces put together for the chair. M5Stack Tab5 (ESP32-P4) with a touch screen, a 3D hall joystick (X, Y, twist), haptics over a DRV2605, and Ethernet RTPS with PoE. It runs the same espp stack as the Racer.
+An application: several SPACE pieces put together for the chair. Alain designed the PCB, called the Pixis. M5Stack Tab5 (ESP32-P4) with a touch screen, a 3D hall joystick (X, Y, twist), haptics over a DRV2605, and Ethernet RTPS with PoE. It runs the same espp stack as the Racer.
 
 From the deck: "a PACE node that happens to be a screen". The chair's controller owns the state; the HMI shows it and asks for changes. If status is lost for two seconds the screen says link lost and refuses drive and seat. Seat commands are absolute targets, so a lost or repeated packet cannot drift the seat. Calibration, settings, self test, and logs all live on the node.
 
