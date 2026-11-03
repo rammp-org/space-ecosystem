@@ -8,7 +8,7 @@ SPACE (Sensing, Power, Actuation, and Control Electronics) is the family of netw
 |---|---|---|
 | Node | Anything with an MCU on the RTPS net. It has an identity and publishes status. | device |
 | Module | A SPACE building block with one job: the Racer, power distribution, the I/O node. Grouped into families. | node, when the reusable-block meaning is intended |
-| Application | Several modules put together for one robot, with the robot-specific logic: the HMI on the Pixis board, the MIB. | module |
+| Application | The robot-level integration that pulls modules in and owns robot-specific logic such as motion intent. Modules are libraries; the application is main.cpp. Examples: the MIB, the HMI on the Pixis board. | module |
 | Family | One of the deck's module groups: power distribution, motor drive, I/O node and safety I/O, net infrastructure and Devkit. | |
 | Pillar | A capability tag: S (sensing), P (power), A (actuation), C (control/comms). One module can carry several. | |
 | Zone | One region of the chair, served by a smart bus bar and a managed switch. Proposed in the "Zones" decision. | hub |
