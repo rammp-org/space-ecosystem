@@ -1,14 +1,14 @@
 ---
 question: "Are drive outputs fully reverse-blocking?"
 area: Power
-status: leaning
+status: decided
 source: "Grilling 2026-10-19 (Denver's question)"
 order: 14
 ---
 
-## Where it is leaning
+## Answer
 
-Leaning yes on the 1 kW and 300 W drive outputs (back-to-back MOSFETs or an ideal-diode controller), so an off output is off in both directions. Normal regen still flows while the output is on. Compute and accessory outputs use a plain high-side FET.
+Decided by Alex, 2026-11-03. Yes on the 1 kW and 300 W drive outputs (back-to-back MOSFETs or an ideal-diode controller), so an off output is off in both directions. Normal regen still flows while the output is on. Compute and accessory outputs use a plain high-side FET.
 
 ## Why
 

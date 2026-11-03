@@ -1,14 +1,14 @@
 ---
 question: "Does the S stand for Sensing or Sensors?"
 area: Scope
-status: leaning
+status: decided
 source: "Smart bus bar brief says Sensors; the rename says Sensing"
 order: 1
 ---
 
-## Where it is leaning
+## Answer
 
-Leaning Sensing.
+Decided by Alex, 2026-11-03. Sensing.
 
 ## Why
 

@@ -1,15 +1,15 @@
 ---
 question: "What voltage and power path does each kind of port get?"
 area: Power
-status: leaning
+status: decided
 source: "October deck; bus bar brief; grilling 2026-10-19"
 order: 8
 draft: true
 ---
 
-## Where it is leaning
+## Answer
 
-Leaning the deck's rule: drives sit on the battery bus (12 to 48 V) and are never PoE. Every other module is Ethernet or PoE. Secondary ports get bus-set voltages. Single-pair power over data, if used, is only for small sensing modules (about 20 W and under).
+Decided by Alex, 2026-11-03. The deck's rule: drives sit on the battery bus (12 to 48 V) and are never PoE. Every other module is Ethernet or PoE. Secondary ports get bus-set voltages. Single-pair power over data, if used, is only for small sensing modules (about 20 W and under).
 
 ## Why
 

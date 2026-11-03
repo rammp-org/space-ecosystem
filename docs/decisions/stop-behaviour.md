@@ -1,15 +1,15 @@
 ---
 question: "What does each kind of stop do?"
 area: Safety
-status: leaning
+status: decided
 source: "Racer motor API; grilling 2026-10-19"
 order: 20
 draft: true
 ---
 
-## Where it is leaning
+## Answer
 
-Leaning the firmware's behaviour: SAFE_STOP and 200 ms of command silence ramp down and then hold position; ESTOP and faults put the bridge in Hi-Z. PRD v0.1 F-04 ("always coast, no braking") gets rewritten to match.
+Decided by Alex, 2026-11-03. Adopt the Racer firmware's behaviour: SAFE_STOP and 200 ms of command silence ramp down and then hold position; ESTOP and faults put the bridge in Hi-Z. PRD v0.1 F-04 ("always coast, no braking") gets rewritten to match.
 
 ## Why
 

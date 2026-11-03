@@ -1,15 +1,15 @@
 ---
 question: "Where does the e-stop chain terminate?"
 area: Safety
-status: leaning
+status: decided
 source: "October deck; bus bar brief; grilling 2026-10-19"
 order: 19
 draft: true
 ---
 
-## Where it is leaning
+## Answer
 
-Leaning: at power distribution. A two-channel e-stop input opens the forward path on every motion output in hardware, without passing through the MCU. The bus bar firmware then publishes ESTOP/STO on the network so drives go Hi-Z and every module logs it. Compute, screens, and the bus bar's own controller stay powered. There is no separate wire to each Racer.
+Decided by Alex, 2026-11-03. At power distribution. A two-channel e-stop input opens the forward path on every motion output in hardware, without passing through the MCU. The bus bar firmware then publishes ESTOP/STO on the network so drives go Hi-Z and every module logs it. Compute, screens, and the bus bar's own controller stay powered. There is no separate wire to each Racer.
 
 ## Why
 
